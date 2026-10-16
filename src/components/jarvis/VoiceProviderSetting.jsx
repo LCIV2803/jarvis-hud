@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { HUD } from '@/lib/jarvis';
 
@@ -27,6 +27,8 @@ export default function VoiceProviderSetting({ profile, canEdit, loaded, onSaveP
     const aOk = !!(fresh?.retell_agent_id || '').trim();
     const nOk = !!(fresh?.retell_from_number || '').trim();
     const mOk = !!(fresh?.owner_phone || '').trim();
+    if (!ag.length) return setStatus({ msg: 'No Retell agents in your account yet. Create one at app.retellai.com, then press Check again.', red: true });
+    if (!nm.length) return setStatus({ msg: 'No Retell phone numbers in your account yet. Buy one in Retell, then press Check again.', red: true });
     if (aOk && nOk && mOk) return setStatus({ msg: 'Found your Retell agent and number', red: false });
     if (!aOk && ag.length > 1) return setStatus({ msg: 'Pick your Retell agent below.', red: false });
     if (!nOk && nm.length > 1) return setStatus({ msg: 'Pick your Retell number below.', red: false });
@@ -60,6 +62,17 @@ export default function VoiceProviderSetting({ profile, canEdit, loaded, onSaveP
     }
     setDiscovering(false);
   };
+
+  // If Retell is active but its agent or number is still missing, look them
+  // up once on page load so the panel shows real setup status, not silence.
+  const discoverRan = useRef(false);
+  useEffect(() => {
+    if (discoverRan.current || !loaded || !canEdit || current !== 'retell') return;
+    if (agentSet && numberSet) return;
+    discoverRan.current = true;
+    runDiscover(profile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, canEdit, current, agentSet, numberSet]);
 
   const select = async (next) => {
     if (!canEdit || discovering || saving) return;
@@ -137,8 +150,9 @@ export default function VoiceProviderSetting({ profile, canEdit, loaded, onSaveP
         <div className="mt-4 flex flex-col gap-3">
           {discovering && <div className="font-mono text-[10px] tracking-[0.14em] text-hud-faint">Looking up your Retell setup…</div>}
           {status && !discovering && (
-            <div className="font-mono text-[10px] tracking-[0.14em] px-3 py-1.5 border" style={{ color: status.red ? '#E5533D' : HUD.green, borderColor: status.red ? 'rgba(229,83,61,0.5)' : 'rgba(61,220,132,0.4)' }}>
-              {status.msg}
+            <div className="font-mono text-[10px] tracking-[0.14em] px-3 py-1.5 border flex items-center justify-between gap-3" style={{ color: status.red ? '#E5533D' : HUD.green, borderColor: status.red ? 'rgba(229,83,61,0.5)' : 'rgba(61,220,132,0.4)' }}>
+              <span>{status.msg}</span>
+              <button type="button" className="font-mono text-[10px] tracking-[0.18em] uppercase text-hud-text2 hover:text-hud-text shrink-0" onClick={() => runDiscover(profile)} disabled={discovering}>Check again</button>
             </div>
           )}
           {showAgentPicker && (

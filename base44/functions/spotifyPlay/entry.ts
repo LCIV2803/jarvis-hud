@@ -50,31 +50,9 @@ export default async function(req) {
     }
     const headers = { Authorization: 'Bearer ' + tokens.access_token, 'Content-Type': 'application/json' };
 
-    // The song a clap plays: "Back to Life" by Adriatique, falling back to
-    // the owner's most-played track if that lookup fails.
-    let uri = '';
-    let trackName = '';
-    try {
-      const searchRes = await fetch(SPOTIFY_API + '/search?q=' + encodeURIComponent('Back to Life Adriatique') + '&type=track&limit=1', { headers });
-      if (searchRes.ok) {
-        const search = await searchRes.json();
-        const t = search && search.tracks && search.tracks.items && search.tracks.items[0];
-        if (t && t.uri) { uri = t.uri; trackName = t.name + ' — ' + (t.artists || []).map((a) => a.name).join(', '); }
-      }
-    } catch {}
-    if (!uri) {
-      try {
-        const topRes = await fetch(SPOTIFY_API + '/me/top/tracks?limit=1', { headers });
-        if (topRes.ok) {
-          const top = await topRes.json();
-          const t = top && top.items && top.items[0];
-          if (t && t.uri) { uri = t.uri; trackName = t.name; }
-        }
-      } catch {}
-    }
-    if (!uri) {
-      return json({ error: 'no_track', message: 'No song found on your Spotify yet. Play or like a few songs so Spotify has a top track.' }, 400);
-    }
+    // The song a clap plays: "Back to Life" by Adriatique.
+    const uri = 'spotify:track:1FA0Adwe8FnRNpja1KYyT5';
+    const trackName = 'Back to Life — Adriatique';
 
     const devicesRes = await fetch(SPOTIFY_API + '/me/player/devices', { headers });
     const devices = devicesRes.ok ? (((await devicesRes.json()) || {}).devices || []) : [];

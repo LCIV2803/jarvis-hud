@@ -4,7 +4,7 @@ export const speechSupported = () =>
   typeof window !== 'undefined' && Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
 
 // Continuous browser speech recognition that auto-restarts while active.
-export default function useSpeechRecognition(onFinal) {
+export default function useSpeechRecognition(onFinal, language) {
   const callback = useRef(onFinal);
   callback.current = onFinal;
   const recognition = useRef(null);
@@ -18,7 +18,9 @@ export default function useSpeechRecognition(onFinal) {
     recognition.current = null;
     if (current) {
       current.onend = null;
-      try { current.stop(); } catch { /* already stopped */ }
+      current.onresult = null;
+      current.onerror = null;
+      try { current.abort(); } catch { /* already stopped */ }
     }
     setListening(false);
   }, []);
@@ -27,7 +29,7 @@ export default function useSpeechRecognition(onFinal) {
     if (!speechSupported() || active.current) return false;
     const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const instance = new Recognition();
-    instance.lang = navigator.language || 'en-US';
+    instance.lang = language || navigator.language || 'en-US';
     instance.continuous = true;
     instance.interimResults = true;
     instance.onresult = (event) => {
@@ -55,7 +57,7 @@ export default function useSpeechRecognition(onFinal) {
     recognition.current = instance;
     setListening(true);
     return true;
-  }, []);
+  }, [language]);
 
   useEffect(() => stop, [stop]);
   return { supported: speechSupported(), listening, error, start, stop };

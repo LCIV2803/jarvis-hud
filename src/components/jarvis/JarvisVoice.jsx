@@ -6,6 +6,9 @@ import useJarvisConversation from '@/hooks/useJarvisConversation';
 import VoiceMessageList from '@/components/jarvis/VoiceMessageList';
 import { createJarvisSpeaker } from '@/lib/jarvis-speech';
 import { generateJarvisSpeech } from '@/lib/server-fns';
+import useMusicCommand from '@/hooks/useMusicCommand';
+import MusicCommandStatus from '@/components/jarvis/MusicCommandStatus';
+import { isBeginMusicCommand } from '@/lib/music-command';
 
 const btnCls = 'font-mono text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 border border-hud-border bg-hud-panel text-hud-text2 hover:text-hud-text hover:border-hud-accent transition-colors duration-200 focus:outline-none focus-visible:border-hud-accent disabled:opacity-60 disabled:cursor-default';
 const pillCls = 'font-mono text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 border border-hud-border bg-hud-panel text-hud-text2';
@@ -22,9 +25,11 @@ export default function JarvisVoice() {
 
   const generateSpeech = useServerFn(generateJarvisSpeech);
   const speaker = useMemo(() => createJarvisSpeaker(generateSpeech), [generateSpeech]);
+  const music = useMusicCommand();
 
   const commands = useSpeechRecognition((transcript) => {
     if (!transcript || speakingRef.current) return;
+    if (isBeginMusicCommand(transcript)) { void music.start(); return; }
     const remainder = transcript.replace(/^.*?\bjarvis\b[,]?\s*/i, '').trim();
     setPhase('thinking');
     commands.stop();
@@ -56,7 +61,7 @@ export default function JarvisVoice() {
       commands.start();
     });
   }, [conversation, commands, speaker]);
-  const wakeWord = useWakeWord(wake);
+  const wakeWord = useWakeWord(wake, music.start);
 
   // Automatic: the wake word arms itself whenever the dashboard loads.
   useEffect(() => {
@@ -91,10 +96,12 @@ export default function JarvisVoice() {
   };
 
   return (
+    <>
+    <MusicCommandStatus {...music} />
     <div className="fixed bottom-4 left-4 z-40 flex flex-col items-start gap-2">
-      {notice && (
+      {(notice || !wakeWord.supported) && (
         <div className="font-mono text-[10px] tracking-[0.14em] px-3 py-1.5 bg-hud-panel border border-hud-red text-hud-red max-w-[280px]">
-          {notice}
+          {notice || 'Voice commands need a speech-recognition browser, such as Chrome.'}
         </div>
       )}
       {wakeWord.supported && wakeWord.armed && !open && (
@@ -126,5 +133,6 @@ export default function JarvisVoice() {
         </div>
       )}
     </div>
+    </>
   );
 }

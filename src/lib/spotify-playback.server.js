@@ -40,7 +40,7 @@ export async function playPinnedSpotifyTrack(base44, clientId, clientSecret) {
   }
   const headers = { Authorization: 'Bearer ' + tokens.access_token, 'Content-Type': 'application/json' };
   let state = await playback(headers);
-  if (matches(state) && state.is_playing) return success(state, true);
+  if (matches(state) && state.is_playing && state.device?.type !== 'Smartphone') return success(state, true);
   const deviceResponse = await fetch(API + '/me/player/devices', { headers });
   if (!deviceResponse.ok) return failure('devices_failed', 'Could not read your Spotify devices.');
   const { devices = [] } = await deviceResponse.json();

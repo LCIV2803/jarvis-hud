@@ -12,7 +12,6 @@ import TaskLanes from '@/components/jarvis/TaskLanes';
 import LeadsView from '@/components/jarvis/LeadsView';
 import MemoryView from '@/components/jarvis/MemoryView';
 import GrainOverlay from '@/components/jarvis/GrainOverlay';
-import ClapListener from '@/components/jarvis/ClapListener';
 import JarvisVoice from '@/components/jarvis/JarvisVoice';
 
 const PAGE_BG =
@@ -236,7 +235,6 @@ export default function Today() {
   return (
     <div className="min-h-screen w-full" style={{ background: PAGE_BG }}>
       <GrainOverlay />
-      <ClapListener />
       <JarvisVoice />
       <div className="jarvis-page-shell relative z-10">
         <HeaderBar goal={profile?.goal_90_day} voiceProvider={profile?.voice_provider || 'base44'} needsOwner={needsOwner} />

@@ -67,6 +67,9 @@
     "hud_app_id": {
       "type": "string"
     },
+    "spotify_refresh_token": {
+      "type": "string"
+    },
     "updated_at": {
       "type": "string",
       "format": "date"

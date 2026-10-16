@@ -12,6 +12,7 @@ import TaskLanes from '@/components/jarvis/TaskLanes';
 import LeadsView from '@/components/jarvis/LeadsView';
 import MemoryView from '@/components/jarvis/MemoryView';
 import GrainOverlay from '@/components/jarvis/GrainOverlay';
+import ClapListener from '@/components/jarvis/ClapListener';
 
 const PAGE_BG =
   'radial-gradient(ellipse 80% 60% at 50% 5%, rgba(17,78,114,0.24) 0%, transparent 70%), radial-gradient(ellipse 90% 70% at 50% 95%, rgba(15,46,82,0.2) 0%, transparent 70%), #040e1d';
@@ -234,6 +235,7 @@ export default function Today() {
   return (
     <div className="min-h-screen w-full" style={{ background: PAGE_BG }}>
       <GrainOverlay />
+      <ClapListener />
       <div className="jarvis-page-shell relative z-10">
         <HeaderBar goal={profile?.goal_90_day} voiceProvider={profile?.voice_provider || 'base44'} needsOwner={needsOwner} />
         <div className="py-8 flex flex-col gap-10">

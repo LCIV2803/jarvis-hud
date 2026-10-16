@@ -19,7 +19,7 @@ async function saveViaUpsert(update) {
 export default function JarvisAgentSetting({ profile, canEdit, loaded, onSaveProfile }) {
   const [agentId, setAgentId] = useState('');
   const [name, setName] = useState('');
-  const [telegram, setTelegram] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState(null); // { msg, red }
 
@@ -27,7 +27,7 @@ export default function JarvisAgentSetting({ profile, canEdit, loaded, onSavePro
   useEffect(() => {
     setAgentId(profile?.superagent_id || '');
     setName(profile?.owner_name || '');
-    setTelegram(profile?.telegram_url || '');
+    setWhatsapp(profile?.whatsapp_url || '');
   }, [profile]);
 
   const connected = !!(profile?.superagent_id || '').trim();
@@ -95,10 +95,10 @@ export default function JarvisAgentSetting({ profile, canEdit, loaded, onSavePro
         </label>
 
         <label className="flex flex-col gap-1.5">
-          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-hud-faint">Telegram link <span className="text-hud-faint normal-case">(optional)</span></span>
+          <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-hud-faint">WhatsApp link <span className="text-hud-faint normal-case">(optional)</span></span>
           <div className="flex gap-2">
-            <input className={fieldCls} placeholder="Paste your Telegram bot link" value={telegram} onChange={(e) => setTelegram(e.target.value)} disabled={saving || !canEdit} />
-            <button type="button" className={btnCls} onClick={() => doSave({ telegram_url: telegram.trim() }, 'Telegram link')} disabled={saving || !canEdit || !telegram.trim()}>Save</button>
+            <input className={fieldCls} placeholder="Paste your WhatsApp link (wa.me/…)" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} disabled={saving || !canEdit} />
+            <button type="button" className={btnCls} onClick={() => doSave({ whatsapp_url: whatsapp.trim() }, 'WhatsApp link')} disabled={saving || !canEdit || !whatsapp.trim()}>Save</button>
           </div>
         </label>
       </div>

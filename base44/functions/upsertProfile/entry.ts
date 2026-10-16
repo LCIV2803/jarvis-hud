@@ -5,10 +5,10 @@ function txt(res, status) {
 }
 
 // Authorized settings write: phone plus the voice-call, Jarvis-agent and
-// Telegram fields the agent needs. superagent_id is the Base44 Superagent id
+// WhatsApp fields the agent needs. superagent_id is the Base44 Superagent id
 // (the 24-hex id after /agents/ in the agent's Base URL); hud_app_id is filled
 // automatically by the Settings page from the app context.
-const STRING_FIELDS = ['phone', 'retell_agent_id', 'retell_from_number', 'owner_phone', 'superagent_id', 'telegram_url', 'hud_app_id', 'owner_name'];
+const STRING_FIELDS = ['phone', 'retell_agent_id', 'retell_from_number', 'owner_phone', 'superagent_id', 'whatsapp_url', 'hud_app_id', 'owner_name'];
 const VOICE_PROVIDERS = ['base44', 'retell'];
 
 export default async function(req) {

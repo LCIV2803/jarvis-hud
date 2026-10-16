@@ -61,7 +61,7 @@
     "superagent_id": {
       "type": "string"
     },
-    "telegram_url": {
+    "whatsapp_url": {
       "type": "string"
     },
     "hud_app_id": {
@@ -102,5 +102,6 @@
         "role": "admin"
       }
     }
-  }
+  },
+  "required": []
 }

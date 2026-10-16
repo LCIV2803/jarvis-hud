@@ -26,13 +26,13 @@ export default function HeaderActions({ voiceProvider = 'base44' }) {
   const inFlightTimer = useRef(null);
   const mounted = useRef(true);
   const reduced = prefersReducedMotion();
-  // Telegram link comes from the Profile record (telegram_url), so this header
+  // WhatsApp link comes from the Profile record (whatsapp_url), so this header
   // installs unchanged for any owner; no account link is hard-coded.
-  const [telegramUrl, setTelegramUrl] = useState('');
+  const [whatsappUrl, setWhatsappUrl] = useState('');
   useEffect(() => {
     let active = true;
     base44.entities.Profile.list('-updated_date', 1)
-      .then((list) => { if (active) setTelegramUrl((list && list[0] && list[0].telegram_url) || ''); })
+      .then((list) => { if (active) setWhatsappUrl((list && list[0] && list[0].whatsapp_url) || ''); })
       .catch(() => {});
     return () => { active = false; };
   }, []);
@@ -100,7 +100,7 @@ export default function HeaderActions({ voiceProvider = 'base44' }) {
     <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-hud-faint px-1">{ownerLabel}</span>
     <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-hud-text2 px-1" title="Active CALL ME voice provider — change it in Settings">Voice · {voiceProvider === 'retell' ? 'Retell' : 'Base44'}</span>
     <button type="button" onClick={handleCallMe} disabled={calling} className={btnBase}>{calling ? 'Calling...' : 'Call Me'}</button>
-    {telegramUrl && <button type="button" onClick={() => window.open(telegramUrl, '_blank', 'noopener,noreferrer')} className={btnBase}>Text</button>}
+    {whatsappUrl && <button type="button" onClick={() => window.open(whatsappUrl, '_blank', 'noopener,noreferrer')} className={btnBase}>Text</button>}
     <Link to="/settings" className={btnBase}>Settings</Link>
     <div aria-live="polite" className="absolute right-0 top-full mt-2 z-50 pointer-events-none" style={{ opacity: toast ? 1 : 0, transform: toast ? 'translateY(0)' : 'translateY(-4px)', transition: reduced ? 'none' : 'opacity 200ms ease-out, transform 200ms ease-out' }}>
       {toast && <div className="max-w-[320px] font-mono text-[10px] tracking-[0.12em] bg-hud-panel border px-3 py-1.5 text-right" style={{ color: toastRed ? '#E5533D' : '#EAF4FF', borderColor: toastRed ? 'rgba(229,83,61,0.5)' : '#14356B' }}>{toastMsg}</div>}

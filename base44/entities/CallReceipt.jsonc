@@ -1,0 +1,65 @@
+{
+  "name": "CallReceipt",
+  "type": "object",
+  "properties": {
+    "call_id": {
+      "type": "string",
+      "required": true
+    },
+    "status": {
+      "type": "string",
+      "required": true
+    },
+    "call_completed_at_ms": {
+      "type": "number",
+      "required": true
+    },
+    "created_at_ms": {
+      "type": "number",
+      "required": true
+    },
+    "conversation_id": {
+      "type": "string"
+    },
+    "message_id": {
+      "type": "string"
+    },
+    "error": {
+      "type": "string"
+    },
+    "lock_until_ms": {
+      "type": "number"
+    },
+    "continue_count": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "call_id",
+    "status",
+    "call_completed_at_ms",
+    "created_at_ms"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service"
+      }
+    }
+  }
+}

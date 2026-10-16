@@ -1,0 +1,59 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "todo",
+        "doing",
+        "done"
+      ],
+      "default": "todo"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high"
+      ],
+      "default": "normal"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "execution_owner": {
+      "type": "string",
+      "enum": [
+        "jarvis",
+        "owner"
+      ]
+    },
+    "progress_note": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "progress_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "done_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

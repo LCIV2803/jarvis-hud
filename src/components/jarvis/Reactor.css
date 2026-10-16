@@ -1,0 +1,40 @@
+.jarvis-core{--core-cyan:#79edff;position:relative;isolation:isolate;width:100%;max-width:520px;min-width:0;color:#c3e9f7;font-family:'Geist Mono',ui-monospace,monospace;contain:layout style}
+.jarvis-core__heading{display:flex;align-items:center;gap:10px;font-size:8px;letter-spacing:2px;color:#89afc7;white-space:nowrap;padding:0 26px}
+.jarvis-core__diamond{width:5px;height:5px;transform:rotate(45deg);background:#79edff;box-shadow:0 0 12px #79edff99;flex-shrink:0}
+.jarvis-core__rule{height:1px;flex:1;background:linear-gradient(90deg,#79edff40,transparent)}
+.jarvis-core__heading>span:last-child{color:#7193ad;font-size:8px;letter-spacing:1px}
+.jarvis-core__scene{position:relative;aspect-ratio:1;width:100%;margin-top:6px}
+.jarvis-core__ambient{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,#1b9dbc12,transparent 68%);box-shadow:0 0 90px #1bb4f008;pointer-events:none}
+.jarvis-core__drawing{display:block;width:100%;height:90%;overflow:visible}
+.jarvis-core__rotate{transform-origin:320px 320px;animation:jarvis-core-turn 100s linear infinite}
+.jarvis-core__outer{animation-duration:120s}
+.jarvis-core__segments{animation-duration:100s;animation-direction:reverse}
+.jarvis-core__scanner{animation-duration:16s}
+.jarvis-core__turbine{animation-duration:70s}
+.jarvis-core__energy{animation:jarvis-core-breathe 6s ease-in-out infinite}
+.jarvis-core__receipt{transform-origin:320px 320px;animation:jarvis-core-receipt 1.4s ease-out forwards;pointer-events:none}
+.jarvis-core__identity{position:absolute;left:0;right:0;top:90%;text-align:center;pointer-events:none}
+.jarvis-core__identity>span{display:block;font-family:'Geist',system-ui,sans-serif;font-size:clamp(21px,2.5vw,30px);font-weight:300;letter-spacing:.29em;padding-left:.29em;color:#e1faff;text-shadow:0 0 24px #4cceff40}
+.jarvis-core__identity>small{display:block;font-size:7px;letter-spacing:2.4px;color:#91b8ce;margin-top:6px}
+.jarvis-core__footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 26px 0;padding-top:14px;border-top:1px solid #79edff20}
+.jarvis-core__readout{display:flex;align-items:center;gap:10px}
+.jarvis-core__readout-bar{width:2px;height:24px;background:#e8b45a;box-shadow:0 0 9px #e8b45a35}
+.jarvis-core__readout strong{font-size:24px;font-weight:400;font-variant-numeric:tabular-nums;color:#e1faff}
+.jarvis-core__readout>span:last-child{font-size:8px;line-height:1.65;letter-spacing:1.6px;color:#91b8ce}
+.jarvis-core__motion{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 0 8px 12px;border:0;border-radius:2px;background:transparent;color:#91b8ce;font:inherit;font-size:8px;letter-spacing:1px;cursor:pointer}
+.jarvis-core__motion>span{font-size:13px;color:#b0e8f5}
+.jarvis-core__motion:hover{color:#e1faff}
+.jarvis-core__motion:focus-visible{outline:1px solid #79edff;outline-offset:4px}
+.jarvis-core--paused .jarvis-core__rotate,.jarvis-core--paused .jarvis-core__energy,.jarvis-core--paused .jarvis-core__receipt{animation-play-state:paused}
+@keyframes jarvis-core-turn{to{transform:rotate(360deg)}}
+@keyframes jarvis-core-breathe{0%,100%{opacity:.8}50%{opacity:1}}
+@keyframes jarvis-core-receipt{0%{transform:scale(.8);opacity:.55}100%{transform:scale(1.5);opacity:0}}
+@media(max-width:600px){.jarvis-core{max-width:430px}.jarvis-core__heading{padding:0 16px;font-size:7px;letter-spacing:1.4px}.jarvis-core__footer{margin-left:16px;margin-right:16px}.jarvis-core__identity>small{font-size:6px;letter-spacing:1.4px}}
+@media(prefers-reduced-motion:reduce){.jarvis-core__rotate,.jarvis-core__energy,.jarvis-core__receipt{animation:none!important}.jarvis-core__motion{display:none}}
+
+/* Only the main HUD composition changes; task, call and auth code is untouched. */
+.jarvis-command-grid{display:grid;grid-template-columns:minmax(160px,.8fr) minmax(340px,1.65fr) minmax(200px,1fr);gap:32px;align-items:center}
+.jarvis-command-grid>div{min-width:0}
+.jarvis-page-shell{max-width:1320px;margin:0 auto;padding-left:32px;padding-right:32px}
+@media(max-width:1050px){.jarvis-command-grid{grid-template-columns:minmax(145px,.7fr) minmax(300px,1.3fr);gap:24px}.jarvis-command-grid>.jarvis-comms-panel{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px}.jarvis-page-shell>div:first-child{height:auto;min-height:64px;flex-wrap:wrap;gap:12px;padding:14px 0}.jarvis-page-shell>div:first-child>.text-hud-amber{order:2;flex-basis:100%;margin-left:0}.jarvis-page-shell>div:first-child>.tracking-\[0\.26em\]{display:none}}
+@media(max-width:640px){.jarvis-page-shell{padding-left:18px;padding-right:18px}.jarvis-command-grid{grid-template-columns:minmax(0,1fr);gap:28px}.jarvis-command-grid>div:first-child{display:grid;grid-template-columns:1fr 1fr;gap:24px;grid-column:1;grid-row:2}.jarvis-command-grid>.jarvis-reactor-panel{grid-column:1;grid-row:1}.jarvis-command-grid>.jarvis-comms-panel{display:flex;grid-column:1;grid-row:3}.jarvis-core__identity>span{font-size:24px}.jarvis-page-shell>div:first-child{height:auto;min-height:64px;flex-wrap:wrap;gap:12px;padding:14px 0}.jarvis-page-shell>div:first-child>div:last-child{margin-left:auto}}

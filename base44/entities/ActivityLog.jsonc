@@ -1,0 +1,25 @@
+{
+  "name": "ActivityLog",
+  "type": "object",
+  "properties": {
+    "message": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "task_started",
+        "task_done",
+        "note",
+        "update"
+      ],
+      "default": "note"
+    },
+    "task_title": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "message"
+  ]
+}

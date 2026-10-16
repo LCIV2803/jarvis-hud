@@ -1,0 +1,76 @@
+{
+  "name": "CallControl",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "lock_until_ms": {
+      "type": "number"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "dispatch_state": {
+      "type": "string",
+      "enum": [
+        "idle",
+        "claimed",
+        "submitting",
+        "submitted",
+        "unknown",
+        "failed"
+      ],
+      "default": "idle"
+    },
+    "conversation_id": {
+      "type": "string"
+    },
+    "message_id": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "enrollment_at_ms": {
+      "type": "number"
+    },
+    "poll_lock_until_ms": {
+      "type": "number",
+      "default": 0
+    },
+    "poll_request_id": {
+      "type": "string"
+    },
+    "native_naive_timestamps_utc": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service"
+      }
+    }
+  }
+}

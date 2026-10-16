@@ -1,0 +1,45 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/5 * * * *",
+      "one_time_date": null,
+      "timezone": "Australia/Brisbane",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Jarvis after-call execution bridge",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "jarvis_after_call_bridge",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "probe_auth": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "afterCall",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Process completed owner calls",
+            "description": "Fetch completed owner-call transcripts and dispatch safe wrap-up via after-call bridge"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Process completed owner calls. Calls afterCall every five minutes via the native after-call bridge to fetch completed owner-call transcripts and dispatch safe authorized wrap-up work."
+}

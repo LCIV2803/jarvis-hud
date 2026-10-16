@@ -1,0 +1,38 @@
+{
+  "name": "SessionLog",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "job": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "done"
+      ],
+      "default": "open"
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "conversation_ref": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "title",
+    "job"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "business_name": {
+      "type": "string"
+    },
+    "trade": {
+      "type": "string"
+    },
+    "suburb": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "google_rating": {
+      "type": "number"
+    },
+    "review_count": {
+      "type": "number"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "demo_built",
+        "contacted",
+        "replied",
+        "won",
+        "lost"
+      ],
+      "default": "new"
+    },
+    "demo_url": {
+      "type": "string"
+    },
+    "pitch": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "deal_value": {
+      "type": "number"
+    },
+    "won_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "business_name",
+    "trade",
+    "suburb",
+    "source_url"
+  ]
+}

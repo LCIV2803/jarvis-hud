@@ -1,3 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
+
+@keyframes hud-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+@keyframes hud-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes hud-spin-ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+@keyframes hud-log-in { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes hud-dot-glow { 0% { box-shadow: 0 0 12px #52B5FF; } 100% { box-shadow: 0 0 0 transparent; } }
+@keyframes hud-breathe-glow { 0% { transform: scale(0.94); opacity: 0.55; } 50% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(0.94); opacity: 0.55; } }
+@keyframes hud-breathe-circle { 0% { opacity: 0.3; } 50% { opacity: 0.55; } 100% { opacity: 0.3; } }
+@keyframes hud-radar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes hud-ripple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(1.7); opacity: 0; } }
+@keyframes hud-grain { 0% { opacity: 0.016; } 50% { opacity: 0.026; } 100% { opacity: 0.016; } }
+@keyframes hud-act-dot { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+@keyframes hud-num-glow { 0% { text-shadow: 0 0 18px #52B5FF; } 100% { text-shadow: 0 0 0 transparent; } }
+
+.hud-pulse { animation: hud-pulse 2.4s ease-in-out infinite; }
+.hud-spin { animation: hud-spin 140s linear infinite; transform-box: fill-box; transform-origin: center; }
+.hud-log-row { animation: hud-log-in 0.5s ease-out; }
+.hud-log-dot { animation: hud-dot-glow 1.4s ease-out; }
+.hud-ring-a { animation: hud-spin 72s linear infinite; transform-box: fill-box; transform-origin: center; }
+.hud-ring-b { animation: hud-spin-ccw 96s linear infinite; transform-box: fill-box; transform-origin: center; }
+.hud-ring-c { animation: hud-spin-ccw 160s linear infinite; transform-box: fill-box; transform-origin: center; }
+.hud-ring-d { animation: hud-spin 220s linear infinite; transform-box: fill-box; transform-origin: center; }
+.hud-radar { animation: hud-radar 8s linear infinite; transform-box: view-box; transform-origin: 160px 160px; }
+.hud-breathe-glow { animation: hud-breathe-glow 4.8s ease-in-out infinite; }
+.hud-breathe-circle { animation: hud-breathe-circle 4.8s ease-in-out infinite; }
+.hud-ripple { animation: hud-ripple 1.4s ease-out forwards; transform-box: fill-box; transform-origin: center; opacity: 0; }
+.hud-grain { animation: hud-grain 3.2s ease-in-out infinite; }
+.hud-act-dot { animation: hud-act-dot 2.4s ease-in-out infinite; }
+.hud-num-glow { animation: hud-num-glow 1.2s ease-out forwards; }
+@keyframes hud-core-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.hud-core-pulse { animation: hud-core-pulse 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,10 +62,10 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --font-heading: ui-sans-serif, system-ui, sans-serif;
-    --font-body: ui-sans-serif, system-ui, sans-serif;
-    --font-display: ui-sans-serif, system-ui, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-heading: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -88,5 +121,14 @@
 
   body {
     @apply bg-background text-foreground font-body;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-pulse, .hud-spin, .hud-log-row, .hud-log-dot,
+  .hud-ring-a, .hud-ring-b, .hud-ring-c, .hud-ring-d,
+  .hud-radar, .hud-breathe-glow, .hud-breathe-circle,
+  .hud-ripple, .hud-grain, .hud-act-dot, .hud-num-glow, .hud-core-pulse {
+    animation: none !important;
   }
 }

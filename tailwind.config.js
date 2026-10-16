@@ -13,6 +13,18 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			hud: {
+  				bg: '#051838',
+  				panel: '#071A3A',
+  				border: '#14356B',
+  				text: '#EAF4FF',
+  				text2: '#7FB2E8',
+  				faint: '#3E6AA8',
+  				accent: '#52B5FF',
+  				green: '#3DDC84',
+  				amber: '#E8B45A',
+  				red: '#E5533D'
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

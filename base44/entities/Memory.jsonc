@@ -1,0 +1,33 @@
+{
+  "name": "Memory",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "fact",
+        "decision",
+        "event",
+        "question",
+        "outcome"
+      ],
+      "default": "event"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "text"
+  ]
+}

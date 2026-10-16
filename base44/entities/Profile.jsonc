@@ -1,0 +1,106 @@
+{
+  "name": "Profile",
+  "type": "object",
+  "properties": {
+    "business_name": {
+      "type": "string"
+    },
+    "owner_name": {
+      "type": "string"
+    },
+    "niche": {
+      "type": "string"
+    },
+    "service": {
+      "type": "string"
+    },
+    "suburbs": {
+      "type": "string"
+    },
+    "price_low": {
+      "type": "number"
+    },
+    "price_high": {
+      "type": "number"
+    },
+    "tools": {
+      "type": "string"
+    },
+    "call_hours": {
+      "type": "string"
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "checkin_time": {
+      "type": "string"
+    },
+    "goal_90_day": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "voice_provider": {
+      "type": "string",
+      "enum": [
+        "base44",
+        "retell"
+      ],
+      "default": "base44"
+    },
+    "retell_agent_id": {
+      "type": "string"
+    },
+    "retell_from_number": {
+      "type": "string"
+    },
+    "owner_phone": {
+      "type": "string"
+    },
+    "superagent_id": {
+      "type": "string"
+    },
+    "telegram_url": {
+      "type": "string"
+    },
+    "hud_app_id": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

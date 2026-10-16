@@ -44,8 +44,9 @@ export async function playPinnedSpotifyTrack(base44, clientId, clientSecret) {
   const deviceResponse = await fetch(API + '/me/player/devices', { headers });
   if (!deviceResponse.ok) return failure('devices_failed', 'Could not read your Spotify devices.');
   const { devices = [] } = await deviceResponse.json();
-  const device = devices.find((d) => d.is_active && !d.is_restricted) || devices.find((d) => !d.is_restricted);
-  if (!device) return failure('no_device', 'Open Spotify on your phone or computer, then try again.');
+  const eligible = devices.filter((d) => !d.is_restricted && d.type !== 'Smartphone');
+  const device = eligible.find((d) => d.is_active) || eligible[0];
+  if (!device) return failure('no_device', 'Spotify is only open on your phone. Open Spotify on a computer or speaker, then try again.');
   if (!device.is_active) {
     const transfer = await fetch(API + '/me/player', {
       method: 'PUT', headers, body: JSON.stringify({ device_ids: [device.id], play: false }),

@@ -10,28 +10,51 @@ const GREETING_URL = 'https://media.base44.com/files/public/6ad167dc5c10aca7dab4
 export default function useClapListener() {
   const [mode, setMode] = useState('idle');
   const [message, setMessage] = useState(null);
+  const [micDenied, setMicDenied] = useState(false);
   const busy = useRef(false);
   const started = useRef(false);
   const armed = useRef(false);
   const cooldown = useRef(0);
   const triggerRef = useRef(() => {});
   const timer = useRef(null);
+  const firstTimer = useRef(null);
   const greeting = useRef(null);
-  const { arm: openMicrophone, disarm: closeMicrophone } = useClapMicrophone(() => triggerRef.current());
-  const play = useServerFn(startClapMusic);
-  const checkConnection = useServerFn(getSpotifyConnection);
-  const connection = useQuery({ queryKey: ['spotify-connection'], queryFn: () => checkConnection(), staleTime: 60000 });
-  const { mutateAsync } = useMutation({ mutationFn: () => play({ data: {} }) });
   const showMessage = useCallback((text, red = false) => {
     clearTimeout(timer.current);
     setMessage({ text, red });
     timer.current = setTimeout(() => setMessage(null), 10000);
   }, []);
+  const noteFirstClap = useCallback(() => {
+    clearTimeout(timer.current);
+    setMessage({ text: 'One clap heard — clap once more.' });
+    clearTimeout(firstTimer.current);
+    firstTimer.current = setTimeout(() => setMessage(null), 2500);
+  }, []);
+  const { arm: openMicrophone, disarm: closeMicrophone } = useClapMicrophone(
+    () => triggerRef.current(),
+    noteFirstClap,
+  );
+  const play = useServerFn(startClapMusic);
+  const checkConnection = useServerFn(getSpotifyConnection);
+  const connection = useQuery({ queryKey: ['spotify-connection'], queryFn: () => checkConnection(), staleTime: 60000 });
+  const { mutateAsync } = useMutation({ mutationFn: () => play({ data: {} }) });
 
   useEffect(() => {
-    if (sessionStorage.getItem(SESSION_KEY) === 'true') { started.current = true; setMode('started'); }
-    return () => { clearTimeout(timer.current); greeting.current?.pause(); };
-  }, []);
+    if (sessionStorage.getItem(SESSION_KEY) === 'true') { started.current = true; setMode('started'); return undefined; }
+    // Automatic: the microphone arms itself as soon as the dashboard loads.
+    let cancelled = false;
+    openMicrophone().then((opened) => {
+      if (cancelled || opened === false) return;
+      armed.current = true;
+      setMode('listening');
+    }).catch((error) => {
+      if (cancelled) return;
+      setMicDenied(true);
+      if (error?.name !== 'NotAllowedError') showMessage(error?.message || 'Could not open the microphone.', true);
+    });
+    return () => { cancelled = true; armed.current = false; };
+  }, [openMicrophone, showMessage]);
+  useEffect(() => () => { clearTimeout(timer.current); clearTimeout(firstTimer.current); greeting.current?.pause(); }, []);
 
   const trigger = useCallback(async () => {
     if (busy.current || started.current || !armed.current || Date.now() < cooldown.current) return;
@@ -69,34 +92,10 @@ export default function useClapListener() {
   }, [mutateAsync, closeMicrophone, showMessage]);
   useEffect(() => { triggerRef.current = trigger; }, [trigger]);
 
-  const disarm = useCallback(() => {
-    armed.current = false;
-    closeMicrophone();
-    greeting.current?.pause();
-    setMode(started.current ? 'started' : 'idle');
-  }, [closeMicrophone]);
-  useEffect(() => () => { armed.current = false; }, []);
-
-  const arm = useCallback(async () => {
-    if (started.current || busy.current) return;
-    setMode('arming');
-    try {
-      if (!await openMicrophone()) return;
-      armed.current = true;
-      setMode('listening');
-      showMessage('Let the room settle for two seconds, then clap twice sharply, about half a second apart.');
-    } catch (error) {
-      closeMicrophone();
-      setMode('idle');
-      showMessage(error?.name === 'NotAllowedError' ? 'Allow microphone access, then arm again.' : error?.message || 'Could not open the microphone.', true);
-    }
-  }, [openMicrophone, closeMicrophone, showMessage]);
-
   return {
-    mode, arm, disarm,
-    message: message || (connection.isError ? { text: 'Could not check Spotify connection.', red: true } : null),
+    mode, message, micDenied,
     spotify: connection.data?.connected,
-    disabled: connection.isPending || connection.isError || !connection.data?.canControl || ['arming', 'triggering', 'started'].includes(mode),
+    disabled: connection.isPending || connection.isError || !connection.data?.canControl,
     connect: () => window.location.assign('/api/spotify/login'),
   };
 }

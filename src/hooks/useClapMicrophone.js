@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { createClapDetector } from '@/lib/clap-detector';
 
-export default function useClapMicrophone(onClap) {
-  const callback = useRef(onClap);
+export default function useClapMicrophone(onClap, onFirst) {
+  const clap = useRef(onClap);
+  const first = useRef(onFirst);
   const media = useRef(null);
   const generation = useRef(0);
-  callback.current = onClap;
+  clap.current = onClap;
+  first.current = onFirst;
   const disarm = useCallback(() => {
     generation.current++;
     const current = media.current;
@@ -34,19 +36,14 @@ export default function useClapMicrophone(onClap) {
     analyser.smoothingTimeConstant = 0;
     context.createMediaStreamSource(stream).connect(analyser);
     const waveform = new Float32Array(analyser.fftSize);
-    const frequencies = new Uint8Array(analyser.frequencyBinCount);
     const detect = createClapDetector(performance.now());
-    const highBin = Math.floor(1500 * analyser.fftSize / context.sampleRate);
     media.current.timer = setInterval(() => {
       analyser.getFloatTimeDomainData(waveform);
-      analyser.getByteFrequencyData(frequencies);
-      let power = 0, peak = 0, total = 0, high = 0;
+      let power = 0, peak = 0;
       for (const sample of waveform) { power += sample * sample; peak = Math.max(peak, Math.abs(sample)); }
-      for (let i = 0; i < frequencies.length; i++) {
-        total += frequencies[i];
-        if (i >= highBin) high += frequencies[i];
-      }
-      if (detect(performance.now(), Math.sqrt(power / waveform.length), peak, total ? high / total : 0)) callback.current();
+      const result = detect(performance.now(), Math.sqrt(power / waveform.length), peak);
+      if (result === 'double') clap.current();
+      else if (result === 'single') first.current?.();
     }, 12);
     return true;
   }, []);

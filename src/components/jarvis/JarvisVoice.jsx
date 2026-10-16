@@ -1,11 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useServerFn } from '@tanstack/react-start';
 import useWakeWord from '@/hooks/useWakeWord';
 import useSpeechRecognition from '@/hooks/useSpeechRecognition';
 import useJarvisConversation from '@/hooks/useJarvisConversation';
 import VoiceMessageList from '@/components/jarvis/VoiceMessageList';
-import { speakJarvis, stopJarvisSpeech } from '@/lib/jarvis-speech';
+import { createJarvisSpeaker } from '@/lib/jarvis-speech';
+import { generateJarvisSpeech } from '@/lib/server-fns';
 
 const btnCls = 'font-mono text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 border border-hud-border bg-hud-panel text-hud-text2 hover:text-hud-text hover:border-hud-accent transition-colors duration-200 focus:outline-none focus-visible:border-hud-accent disabled:opacity-60 disabled:cursor-default';
+const pillCls = 'font-mono text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 border border-hud-border bg-hud-panel text-hud-text2';
 const phaseLabels = { listening: 'Listening — speak your command', thinking: 'Jarvis is thinking…', speaking: 'Jarvis is speaking…' };
 
 export default function JarvisVoice() {
@@ -16,6 +19,9 @@ export default function JarvisVoice() {
   const openRef = useRef(false);
   const speakingRef = useRef(false);
   openRef.current = open;
+
+  const generateSpeech = useServerFn(generateJarvisSpeech);
+  const speaker = useMemo(() => createJarvisSpeaker(generateSpeech), [generateSpeech]);
 
   const commands = useSpeechRecognition((transcript) => {
     if (!transcript || speakingRef.current) return;
@@ -29,13 +35,13 @@ export default function JarvisVoice() {
     if (!text || !openRef.current) return;
     speakingRef.current = true;
     setPhase('speaking');
-    speakJarvis(text, () => {
+    speaker.speak(text, () => {
       speakingRef.current = false;
       if (!openRef.current) return;
       setPhase('listening');
       commands.start();
     });
-  }, [commands]);
+  }, [commands, speaker]);
 
   const conversation = useJarvisConversation(replyHandler);
 
@@ -44,18 +50,23 @@ export default function JarvisVoice() {
     speakingRef.current = true;
     setPhase('speaking');
     conversation.begin();
-    speakJarvis('At your service.', () => {
+    speaker.speak('At your service.', () => {
       speakingRef.current = false;
       setPhase('listening');
       commands.start();
     });
-  }, [conversation, commands]);
+  }, [conversation, commands, speaker]);
   const wakeWord = useWakeWord(wake);
+
+  // Automatic: the wake word arms itself whenever the dashboard loads.
+  useEffect(() => {
+    if (wakeWord.supported) wakeWord.arm();
+  }, [wakeWord.supported, wakeWord.arm]);
 
   useEffect(() => {
     if (wakeWord.error === 'not-allowed' || wakeWord.error === 'service-not-allowed') {
       wakeWord.disarm();
-      setNotice('Allow microphone access, then arm again.');
+      setNotice('Microphone blocked — allow mic access in your browser, then reload.');
     }
   }, [wakeWord.error, wakeWord.disarm]);
 
@@ -63,11 +74,11 @@ export default function JarvisVoice() {
     setOpen(false);
     openRef.current = false;
     speakingRef.current = false;
-    stopJarvisSpeech();
+    speaker.stop();
     commands.stop();
-    wakeWord.disarm();
+    wakeWord.arm(); // back to standby so "Jarvis" wakes it again
     setPhase('idle');
-  }, [commands, wakeWord]);
+  }, [commands, wakeWord, speaker]);
 
   const submitDraft = (event) => {
     event.preventDefault();
@@ -86,16 +97,12 @@ export default function JarvisVoice() {
           {notice}
         </div>
       )}
-      <button
-        type="button"
-        className={btnCls}
-        disabled={!wakeWord.supported}
-        onClick={() => (wakeWord.armed ? wakeWord.disarm() : wakeWord.arm())}
-        aria-pressed={wakeWord.armed}
-      >
-        {wakeWord.armed && <span className="text-hud-accent" aria-hidden="true">● </span>}
-        {wakeWord.armed ? 'Listening for “Jarvis”' : 'Arm “Jarvis” wake word'}
-      </button>
+      {wakeWord.supported && wakeWord.armed && !open && (
+        <span role="status" aria-live="polite" className={pillCls}>
+          <span className="text-hud-accent" aria-hidden="true">● </span>
+          Listening for “Jarvis”
+        </span>
+      )}
       {open && (
         <div className="w-[min(92vw,360px)] border border-hud-border bg-hud-panel p-3 flex flex-col gap-2">
           <div className="flex items-center justify-between">

@@ -164,6 +164,18 @@ export default async function(req) {
   // Verify, in order: (1) HMAC signature, (2) authenticated Retell lookup.
   // The path that accepted the delivery becomes its source of truth.
   const signatureOk = await verifySignature(rawBody, signature, secret);
+  if (body?.event === 'call_inbound') {
+    if (!signatureOk) return text({ error: 'invalid_signature' }, 401);
+    const digits = (value) => typeof value === 'string' ? value.replace(/\D/g, '') : '';
+    const owner = digits(profile?.owner_phone);
+    const destination = digits(profile?.retell_from_number);
+    const inbound = body.call_inbound;
+    if (!owner || !destination || !expectedAgentId ||
+        digits(inbound?.from_number) !== owner || digits(inbound?.to_number) !== destination) {
+      return text({ call_inbound: { reject: true } });
+    }
+    return text({ call_inbound: { override_agent_id: expectedAgentId } });
+  }
   let call = signatureOk ? body?.call : null;
   let verifyPath = signatureOk ? 'signature' : 'none';
   if (!signatureOk) {

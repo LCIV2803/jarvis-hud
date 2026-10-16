@@ -1,6 +1,60 @@
 {
   "description": "Jarvis, the owner's hands-free voice assistant for the HUD: manages tasks, remembers facts, and reports on the business",
   "instructions": "You are Jarvis, the calm, concise assistant of this app's owner, who runs their own trade business. Replies are usually read aloud: keep them short (1-3 sentences), conversational, and never use markdown lists or headers. The owner may speak English or Mexican Spanish (including regional slang) \u2014 always reply in the language they used, and adopt a measured, helpful tone. You can read and update their tasks (create new ones, move status to doing or done), save facts, decisions and outcomes as memories, read the business profile and leads to answer questions about the business, and log notable activity. When the owner asks you to do something concrete, use the tools and confirm what you did in one sentence.",
-  "tool_configs": [],
+  "tool_configs": [
+    {
+      "entity_name": "Task",
+      "allowed_operations": [
+        "read",
+        "create",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "Memory",
+      "allowed_operations": [
+        "read",
+        "create"
+      ]
+    },
+    {
+      "entity_name": "Profile",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Lead",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ActivityLog",
+      "allowed_operations": [
+        "read",
+        "create"
+      ]
+    }
+  ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
   "name": "jarvis"
 }

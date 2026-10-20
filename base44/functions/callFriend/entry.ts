@@ -78,7 +78,7 @@ export default async function(req) {
           model: 'gpt-4o-mini',
           system_prompt: COURIER_PROMPT,
           dynamic_variables: ['call_message'],
-          general_tools: [{ type: 'end_call' }],
+          general_tools: [{ type: 'end_call', name: 'end_call' }],
         }),
       });
       if (!llm.ok || !llm.body?.llm_id) return json({ error: 'llm_create_failed', message: 'Could not create the courier voice.' }, 502);

@@ -1,23 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
 import { secrets } from 'base44:runtime';
 import { buildRevenueLines } from '../../shared/call-context.ts';
+import { json, mask, latestProfile } from '../../shared/retell.ts';
 
 const CONTROL_NAME = 'owner_native_call';
 const IN_FLIGHT_MS = 10_000;
 const RETELL_URL = 'https://api.retellai.com/v2/create-phone-call';
 // Retell call configuration lives on the Profile record, not in secrets.
 const RETELL_PROFILE_FIELDS = ['retell_agent_id', 'retell_from_number', 'owner_phone'];
-
-function json(body, status) {
-  return Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
-}
-
-// Secret-derived values are never returned in full; only a short tail for diagnostics.
-function mask(value) {
-  if (typeof value !== 'string' || !value) return value ?? null;
-  if (value.length <= 4) return 'set (' + value.length + ' chars)';
-  return '…' + value.slice(-4);
-}
 
 // Short context summary with the doing / waiting labels the Retell prompt expects,
 // and the revenue lines shared with the base44 call route.
@@ -58,7 +48,7 @@ export default async function(req) {
     }
 
     // Plain 400 naming the missing Profile field(s). Retell config is not read from secrets.
-    const profile = (await base44.asServiceRole.entities.Profile.list('-updated_date', 1))[0];
+    const profile = await latestProfile(base44);
     const missing = [];
     for (const field of RETELL_PROFILE_FIELDS) {
       const v = profile ? profile[field] : undefined;

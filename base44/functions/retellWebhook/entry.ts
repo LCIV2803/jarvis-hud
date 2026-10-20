@@ -207,6 +207,25 @@ export default async function(req) {
   if (!body || typeof body !== 'object') return text({ error: 'invalid_body' }, 400);
   if (body.event !== CALL_ANALYZED) return text({ ok: true, ignored: body.event }, 200);
   if (!call || typeof call !== 'object') return text({ ok: true, ignored: 'no_call' }, 200);
+
+  // Courier calls (one-off messages to a friend) are logged directly instead of
+  // being handed to the owner-briefing agent.
+  const courierAgentId = String(profile?.courier_agent_id || '');
+  if (courierAgentId && call.agent_id === courierAgentId) {
+    const courierTranscript = typeof call.transcript === 'string'
+      ? call.transcript
+      : (Array.isArray(call.transcript) ? JSON.stringify(call.transcript) : '');
+    try {
+      await base44.asServiceRole.entities.ActivityLog.create({
+        type: 'note',
+        task_title: 'Jarvis courier call',
+        message: ('Courier call to ' + (call.to_number || callIdFromBody || 'unknown') +
+          ' (' + (call.call_status || 'unknown') + '): ' + courierTranscript).slice(0, 2000),
+      });
+    } catch {}
+    return text({ ok: true, courier_logged: true }, 200);
+  }
+
   if (call.agent_id !== expectedAgentId) return text({ ok: true, ignored: 'other_agent' }, 200);
 
   const callId = call.call_id;
